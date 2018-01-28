@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"errors"
+	"io"
 )
 
 func init() {
@@ -40,8 +41,9 @@ func Test_normal_response(t *testing.T) {
 		}, nil
 	})
 	go server.Start("127.0.0.1:9998")
+	defer server.Stop()
 	time.Sleep(time.Millisecond * 100)
-	resp, err := http.Post("http://127.0.0.1:9998", "application/json",
+	resp, err := httpPost("http://127.0.0.1:9998", "application/json",
 		bytes.NewBufferString(`{"Field1":"hello"}`))
 	should.NoError(err)
 	body, err := ioutil.ReadAll(resp.Body)
@@ -62,8 +64,9 @@ func Test_error_response(t *testing.T) {
 		return nil, errors.New("fake error")
 	})
 	go server.Start("127.0.0.1:9998")
+	defer server.Stop()
 	time.Sleep(time.Millisecond * 100)
-	resp, err := http.Post("http://127.0.0.1:9998", "application/json",
+	resp, err := httpPost("http://127.0.0.1:9998", "application/json",
 		bytes.NewBufferString(`{}`))
 	should.NoError(err)
 	body, err := ioutil.ReadAll(resp.Body)
@@ -95,11 +98,19 @@ func Test_error_number(t *testing.T) {
 		return nil, &MyError{}
 	})
 	go server.Start("127.0.0.1:9998")
+	defer server.Stop()
 	time.Sleep(time.Millisecond * 100)
-	resp, err := http.Post("http://127.0.0.1:9998", "application/json",
+	resp, err := httpPost("http://127.0.0.1:9998", "application/json",
 		bytes.NewBufferString(`{}`))
 	should.NoError(err)
 	body, err := ioutil.ReadAll(resp.Body)
 	should.NoError(err)
 	should.Equal(`{"errno":1024,"errmsg":"my error","data":null}`, string(body))
+}
+
+func httpPost(url string, contentType string, body io.Reader) (resp *http.Response, err error) {
+	client := http.Client{
+		Transport: &http.Transport{},
+	}
+	return client.Post(url, contentType, body)
 }
