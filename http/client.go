@@ -17,8 +17,8 @@ type Client struct {
 
 func NewClient() *Client {
 	return &Client{
-		Unmarshaller: &httpClientUnmarshaller{service.NewJsoniterUnmarshaller()},
-		Marshaller:   &httpClientMarshaller{service.NewJsoniterMarshaller()},
+		Unmarshaller: &httpClientUnmarshaller{newJsoniterUnmarshaller()},
+		Marshaller:   &httpClientMarshaller{newJsoniterMarshaller()},
 	}
 }
 
