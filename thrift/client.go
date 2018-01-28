@@ -1,7 +1,7 @@
 package thrift
 
 import (
-	"github.com/v2pro/plz/plzio"
+	"github.com/v2pro/plz/service"
 	"github.com/v2pro/plz/countlog"
 	"unsafe"
 	"net"
@@ -21,7 +21,7 @@ func NewClient(thriftApi thrifter.API) *Client {
 }
 
 func (client *Client) Handle(addr string, messageName string, ptrHandlerObj interface{}) {
-	ptrHandler, handlerTypeInfo := plzio.ConvertPtrHandler(ptrHandlerObj)
+	ptrHandler, handlerTypeInfo := service.ConvertPtrHandler(ptrHandlerObj)
 	*ptrHandler = func(ctx *countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
 		reqObj := handlerTypeInfo.RequestBoxer(ptrReq)
 		// TODO: connection pool

@@ -7,7 +7,7 @@ import (
 	"github.com/thrift-iterator/go"
 	"time"
 	"github.com/thrift-iterator/go/protocol"
-	"github.com/v2pro/plz/plzio"
+	"github.com/v2pro/plz/service"
 	"unsafe"
 )
 
@@ -26,7 +26,7 @@ func NewServer(thriftApi thrifter.API) *Server {
 }
 
 func (server *Server) Handle(messageName string, handlerObj interface{}) {
-	handler, handlerTypeInfo := plzio.ConvertHandler(handlerObj)
+	handler, handlerTypeInfo := service.ConvertHandler(handlerObj)
 	server.handlers [messageName] = &thriftHandler{
 		handler:         handler,
 		handlerTypeInfo: handlerTypeInfo,
@@ -104,8 +104,8 @@ func (server *Server) Shutdown(ctx *countlog.Context) error {
 }
 
 type thriftHandler struct {
-	handler         plzio.Handler
-	handlerTypeInfo *plzio.HandlerTypeInfo
+	handler         service.Handler
+	handlerTypeInfo *service.HandlerTypeInfo
 }
 
 type ThriftException struct {

@@ -5,12 +5,12 @@ import (
 	"github.com/v2pro/plz/countlog"
 	"io/ioutil"
 	"unsafe"
-	"github.com/v2pro/plz/plzio"
+	"github.com/v2pro/plz/service"
 )
 
 type Server struct {
-	Unmarshaller plzio.Unmarshaller
-	Marshaller   plzio.Marshaller
+	Unmarshaller service.Unmarshaller
+	Marshaller   service.Marshaller
 	mux          *http.ServeMux
 	server       *http.Server
 }
@@ -18,8 +18,8 @@ type Server struct {
 func NewServer() *Server {
 	mux := &http.ServeMux{}
 	return &Server{
-		Unmarshaller: &httpServerUnmarshaller{plzio.NewJsoniterUnmarshaller()},
-		Marshaller:   &httpServerMarshaller{plzio.NewJsoniterResponseMarshaller()},
+		Unmarshaller: &httpServerUnmarshaller{service.NewJsoniterUnmarshaller()},
+		Marshaller:   &httpServerMarshaller{service.NewJsoniterResponseMarshaller()},
 		mux:          mux,
 	}
 }
@@ -45,7 +45,7 @@ func (server *Server) Close() error {
 }
 
 func (server *Server) Handle(pattern string, handlerObj interface{}) {
-	handler, handlerTypeInfo := plzio.ConvertHandler(handlerObj)
+	handler, handlerTypeInfo := service.ConvertHandler(handlerObj)
 	server.mux.Handle(pattern, &handlerAdapter{
 		marshaller:      server.Marshaller,
 		unmarshaller:    server.Unmarshaller,
@@ -55,10 +55,10 @@ func (server *Server) Handle(pattern string, handlerObj interface{}) {
 }
 
 type handlerAdapter struct {
-	unmarshaller    plzio.Unmarshaller
-	marshaller      plzio.Marshaller
-	handler         plzio.Handler
-	handlerTypeInfo *plzio.HandlerTypeInfo
+	unmarshaller    service.Unmarshaller
+	marshaller      service.Marshaller
+	handler         service.Handler
+	handlerTypeInfo *service.HandlerTypeInfo
 }
 
 func (adapter *handlerAdapter) ServeHTTP(httpRespWriter http.ResponseWriter, httpReq *http.Request) {
@@ -69,7 +69,7 @@ func (adapter *handlerAdapter) ServeHTTP(httpRespWriter http.ResponseWriter, htt
 	reqObj := adapter.handlerTypeInfo.RequestBoxer(ptrReq)
 	err := adapter.unmarshaller.Unmarshal(ctx, reqObj, httpReq)
 	if err != nil {
-		err = adapter.marshaller.Marshal(ctx, httpRespWriter, plzio.Response{nil, err})
+		err = adapter.marshaller.Marshal(ctx, httpRespWriter, service.Response{nil, err})
 		if err != nil {
 			ctx.Error("event!failed to write response out", "err", err)
 		}
@@ -77,14 +77,14 @@ func (adapter *handlerAdapter) ServeHTTP(httpRespWriter http.ResponseWriter, htt
 	}
 	resp, err := adapter.handler(ctx, ptrReq)
 	respObj := adapter.handlerTypeInfo.ResponseBoxer(resp)
-	err = adapter.marshaller.Marshal(ctx, httpRespWriter, plzio.Response{respObj, err})
+	err = adapter.marshaller.Marshal(ctx, httpRespWriter, service.Response{respObj, err})
 	if err != nil {
 		ctx.Error("event!failed to write response out", "err", err)
 	}
 }
 
 type httpServerUnmarshaller struct {
-	reqUnmarshaller plzio.Unmarshaller
+	reqUnmarshaller service.Unmarshaller
 }
 
 func (unmarshaller *httpServerUnmarshaller) Unmarshal(ctx *countlog.Context, request interface{}, input interface{}) error {
@@ -99,7 +99,7 @@ func (unmarshaller *httpServerUnmarshaller) Unmarshal(ctx *countlog.Context, req
 }
 
 type httpServerMarshaller struct {
-	respMarshaller plzio.Marshaller
+	respMarshaller service.Marshaller
 }
 
 func (marshaller *httpServerMarshaller) Marshal(ctx *countlog.Context, output interface{}, obj interface{}) error {

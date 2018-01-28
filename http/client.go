@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/v2pro/plz/plzio"
+	"github.com/v2pro/plz/service"
 	"github.com/v2pro/plz/countlog"
 	"unsafe"
 	"net/http"
@@ -11,20 +11,20 @@ import (
 
 type Client struct {
 	*http.Client
-	Unmarshaller plzio.Unmarshaller
-	Marshaller   plzio.Marshaller
+	Unmarshaller service.Unmarshaller
+	Marshaller   service.Marshaller
 }
 
 func NewClient(client *http.Client) *Client {
 	return &Client{
 		Client:       client,
-		Unmarshaller: &httpClientUnmarshaller{plzio.NewJsoniterUnmarshaller()},
-		Marshaller:   &httpClientMarshaller{plzio.NewJsoniterMarshaller()},
+		Unmarshaller: &httpClientUnmarshaller{service.NewJsoniterUnmarshaller()},
+		Marshaller:   &httpClientMarshaller{service.NewJsoniterMarshaller()},
 	}
 }
 
 func (client *Client) Handle(method string, url string, ptrHandlerObj interface{}) {
-	ptrHandler, handlerTypeInfo := plzio.ConvertPtrHandler(ptrHandlerObj)
+	ptrHandler, handlerTypeInfo := service.ConvertPtrHandler(ptrHandlerObj)
 	*ptrHandler = func(ctx *countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
 		reqObj := handlerTypeInfo.RequestBoxer(ptrReq)
 		httpReq, err := http.NewRequest(method, url, nil)
@@ -51,7 +51,7 @@ func (client *Client) Handle(method string, url string, ptrHandlerObj interface{
 }
 
 type httpClientMarshaller struct {
-	reqMarshaller plzio.Marshaller
+	reqMarshaller service.Marshaller
 }
 
 func (marshaller *httpClientMarshaller) Marshal(ctx *countlog.Context, output interface{}, obj interface{}) error {
@@ -66,7 +66,7 @@ func (marshaller *httpClientMarshaller) Marshal(ctx *countlog.Context, output in
 }
 
 type httpClientUnmarshaller struct {
-	respUnmarshaller plzio.Unmarshaller
+	respUnmarshaller service.Unmarshaller
 }
 
 func (unmarshaller *httpClientUnmarshaller) Unmarshal(ctx *countlog.Context, obj interface{}, input interface{}) error {
