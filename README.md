@@ -33,7 +33,7 @@ server
 func sayHello(ctx *countlog.Context, req *MyReqeust) (*MyResponse, error) {
 	// ...
 }
-server := thrift.NewServer()
+server := thrift.NewServer(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
 server.Handle("sayHello", sayHello)
 server.Start("127.0.0.1:9998")
 ```
@@ -42,7 +42,7 @@ client
 
 ```go
 var sayHello = func (ctx *countlog.Context, req *MyReqeust) (*MyResponse, error)
-client := thrift.NewClient()
+client := thrift.NewClient(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
 client.Handle("127.0.0.1:9998", "sayHello", &sayHello)
 
 // use sayHello(...) to call server

@@ -19,8 +19,7 @@ func Test_normal_response(t *testing.T) {
 	type TestResponse struct {
 		Field2 string `thrift:",1"`
 	}
-	//server := NewServer(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
-	server := NewServer(thrifter.DefaultConfig)
+	server := NewServer(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
 	server.Handle("sayHello", func(ctx *countlog.Context, req *TestRequest) (*TestResponse, error) {
 		return &TestResponse{
 			Field2: "hello",
@@ -29,8 +28,7 @@ func Test_normal_response(t *testing.T) {
 	go server.Start("127.0.0.1:9998")
 	time.Sleep(time.Millisecond * 100)
 	defer server.Stop()
-	//client := NewClient(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
-	client := NewClient(thrifter.DefaultConfig)
+	client := NewClient(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
 	var sayHello func(ctx *countlog.Context, req *TestRequest) (*TestResponse, error)
 	client.Handle("127.0.0.1:9998", "sayHello", &sayHello)
 
