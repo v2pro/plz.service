@@ -41,7 +41,7 @@ func Test_normal_response(t *testing.T) {
 		}, nil
 	})
 	go server.Start("127.0.0.1:9998")
-	defer server.Stop()
+	defer server.Close()
 	time.Sleep(time.Millisecond * 100)
 	resp, err := httpPost("http://127.0.0.1:9998", "application/json",
 		bytes.NewBufferString(`{"Field1":"hello"}`))
@@ -64,7 +64,7 @@ func Test_error_response(t *testing.T) {
 		return nil, errors.New("fake error")
 	})
 	go server.Start("127.0.0.1:9998")
-	defer server.Stop()
+	defer server.Close()
 	time.Sleep(time.Millisecond * 100)
 	resp, err := httpPost("http://127.0.0.1:9998", "application/json",
 		bytes.NewBufferString(`{}`))
@@ -98,7 +98,7 @@ func Test_error_number(t *testing.T) {
 		return nil, &MyError{}
 	})
 	go server.Start("127.0.0.1:9998")
-	defer server.Stop()
+	defer server.Close()
 	time.Sleep(time.Millisecond * 100)
 	resp, err := httpPost("http://127.0.0.1:9998", "application/json",
 		bytes.NewBufferString(`{}`))

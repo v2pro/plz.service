@@ -2,7 +2,6 @@ package http
 
 import (
 	"github.com/v2pro/plz/plzio"
-	"reflect"
 	"github.com/v2pro/plz/countlog"
 	"unsafe"
 	"net/http"
@@ -25,7 +24,6 @@ func NewClient(client *http.Client) *Client {
 }
 
 func (client *Client) Handle(method string, url string, ptrHandlerObj interface{}) {
-	reflect.TypeOf(ptrHandlerObj).Elem()
 	ptrHandler, handlerTypeInfo := plzio.ConvertPtrHandler(ptrHandlerObj)
 	*ptrHandler = func(ctx *countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
 		reqObj := handlerTypeInfo.RequestBoxer(ptrReq)

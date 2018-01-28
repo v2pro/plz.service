@@ -6,15 +6,13 @@ import (
 	"io/ioutil"
 	"unsafe"
 	"github.com/v2pro/plz/plzio"
-	"net"
-	"time"
 )
 
 type Server struct {
 	Unmarshaller plzio.Unmarshaller
 	Marshaller   plzio.Marshaller
 	mux          *http.ServeMux
-	listener     net.Listener
+	server       *http.Server
 }
 
 func NewServer() *Server {
@@ -28,38 +26,22 @@ func NewServer() *Server {
 
 func (server *Server) Start(addr string) error {
 	srv := &http.Server{Addr: addr, Handler: server.mux}
-	ln, err := net.Listen("tcp", addr)
-	if err != nil {
-		countlog.Error("event!failed to listen http", "err", err)
-		return err
-	}
-	server.listener = ln
-	return srv.Serve(tcpKeepAliveListener{ln.(*net.TCPListener)})
+	server.server = srv
+	return srv.ListenAndServe()
 }
 
-// tcpKeepAliveListener sets TCP keep-alive timeouts on accepted
-// connections. It's used by ListenAndServe and ListenAndServeTLS so
-// dead TCP connections (e.g. closing laptop mid-download) eventually
-// go away.
-type tcpKeepAliveListener struct {
-	*net.TCPListener
-}
-
-func (ln tcpKeepAliveListener) Accept() (c net.Conn, err error) {
-	tc, err := ln.AcceptTCP()
-	if err != nil {
-		return
-	}
-	tc.SetKeepAlive(true)
-	tc.SetKeepAlivePeriod(3 * time.Minute)
-	return tc, nil
-}
-
-func (server *Server) Stop() error {
-	if server.listener == nil {
+func (server *Server) Shutdown(ctx *countlog.Context) error {
+	if server.server == nil {
 		return nil
 	}
-	return server.listener.Close()
+	return server.server.Shutdown(ctx)
+}
+
+func (server *Server) Close() error {
+	if server.server == nil {
+		return nil
+	}
+	return server.server.Close()
 }
 
 func (server *Server) Handle(pattern string, handlerObj interface{}) {
