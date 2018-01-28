@@ -29,8 +29,8 @@ func Test_client(t *testing.T) {
 	go http.ListenAndServe("127.0.0.1:9997", mux)
 	time.Sleep(time.Millisecond * 100)
 
-	client := NewClient(http.DefaultClient)
-	var sayHello func(*countlog.Context, *TestRequest)(*TestResponse, error)
+	client := NewClient()
+	var sayHello func(*countlog.Context, *TestRequest) (*TestResponse, error)
 	client.Handle("POST", "http://127.0.0.1:9997/sayHello", &sayHello)
 
 	ctx := countlog.Ctx(context.Background())

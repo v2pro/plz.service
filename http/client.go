@@ -10,14 +10,13 @@ import (
 )
 
 type Client struct {
-	*http.Client
+	http.Client
 	Unmarshaller service.Unmarshaller
 	Marshaller   service.Marshaller
 }
 
-func NewClient(client *http.Client) *Client {
+func NewClient() *Client {
 	return &Client{
-		Client:       client,
 		Unmarshaller: &httpClientUnmarshaller{service.NewJsoniterUnmarshaller()},
 		Marshaller:   &httpClientMarshaller{service.NewJsoniterMarshaller()},
 	}
