@@ -17,6 +17,7 @@ type Server struct {
 	thriftApi thrifter.API
 }
 
+// TODO: support framed transport
 func NewServer(thriftApi thrifter.API) *Server {
 	return &Server{
 		executor:  concurrent.NewUnboundedExecutor(),

@@ -14,6 +14,7 @@ type Client struct {
 	thriftApi thrifter.API
 }
 
+// TODO: support framed transport
 func NewClient(thriftApi thrifter.API) *Client {
 	return &Client{
 		thriftApi: thriftApi,
