@@ -9,10 +9,6 @@ import (
 type jsoniterResponseMarshaller struct {
 }
 
-func newJsoniterResponseMarshaller() service.Marshaller {
-	return &jsoniterResponseMarshaller{}
-}
-
 func (marshaller *jsoniterResponseMarshaller) Marshal(ctx *countlog.Context, output interface{}, obj interface{}) error {
 	stream := jsoniter.ConfigDefault.BorrowStream(nil)
 	defer jsoniter.ConfigDefault.ReturnStream(stream)
@@ -49,10 +45,6 @@ type errNo interface {
 }
 
 type jsoniterMarshaller struct {
-}
-
-func newJsoniterMarshaller() service.Marshaller {
-	return &jsoniterMarshaller{}
 }
 
 func (marshaller *jsoniterMarshaller) Marshal(ctx *countlog.Context, output interface{}, obj interface{}) error {

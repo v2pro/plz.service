@@ -18,8 +18,8 @@ type Server struct {
 func NewServer() *Server {
 	mux := &http.ServeMux{}
 	return &Server{
-		Unmarshaller: &httpServerUnmarshaller{newJsoniterUnmarshaller()},
-		Marshaller:   &httpServerMarshaller{newJsoniterResponseMarshaller()},
+		Unmarshaller: &httpServerUnmarshaller{&jsoniterUnmarshaller{}},
+		Marshaller:   &httpServerMarshaller{&jsoniterResponseMarshaller{}},
 		mux:          mux,
 	}
 }

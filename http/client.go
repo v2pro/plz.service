@@ -17,8 +17,8 @@ type Client struct {
 
 func NewClient() *Client {
 	return &Client{
-		Unmarshaller: &httpClientUnmarshaller{newJsoniterUnmarshaller()},
-		Marshaller:   &httpClientMarshaller{newJsoniterMarshaller()},
+		Unmarshaller: &httpClientUnmarshaller{&jsoniterResponseUnmarshaller{}},
+		Marshaller:   &httpClientMarshaller{&jsoniterMarshaller{}},
 	}
 }
 
@@ -73,7 +73,10 @@ func (unmarshaller *httpClientUnmarshaller) Unmarshal(ctx *countlog.Context, obj
 	if err != nil {
 		return err
 	}
-	err = unmarshaller.respUnmarshaller.Unmarshal(ctx, obj, respBody)
+	resp := service.Response{
+		Object: obj,
+	}
+	err = unmarshaller.respUnmarshaller.Unmarshal(ctx, &resp, respBody)
 	if err != nil {
 		return err
 	}
