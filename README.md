@@ -7,7 +7,7 @@ concrete implementation choices for plz service
 server
 
 ```go
-func sayHello(ctx countlog.Context, req *MyReqeust) (*MyResponse, error) {
+func sayHello(ctx *countlog.Context, req *MyReqeust) (*MyResponse, error) {
 	// ...
 }
 server := http.NewServer()
@@ -18,7 +18,7 @@ server.Start("127.0.0.1:9998")
 client
 
 ```go
-var sayHello = func (ctx countlog.Context, req *MyReqeust) (*MyResponse, error)
+var sayHello = func (ctx *countlog.Context, req *MyReqeust) (*MyResponse, error)
 client := http.NewClient()
 client.Handle("POST", "http://127.0.0.1:9998/sayHello", &sayHello)
 
@@ -30,7 +30,7 @@ client.Handle("POST", "http://127.0.0.1:9998/sayHello", &sayHello)
 server 
 
 ```go
-func sayHello(ctx countlog.Context, req *MyReqeust) (*MyResponse, error) {
+func sayHello(ctx *countlog.Context, req *MyReqeust) (*MyResponse, error) {
 	// ...
 }
 server := thrift.NewServer(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
@@ -41,7 +41,7 @@ server.Start("127.0.0.1:9998")
 client
 
 ```go
-var sayHello = func (ctx countlog.Context, req *MyReqeust) (*MyResponse, error)
+var sayHello = func (ctx *countlog.Context, req *MyReqeust) (*MyResponse, error)
 client := thrift.NewClient(thrifter.Config{Protocol: thrifter.ProtocolBinary, IsFramed: true}.Froze())
 client.Handle("127.0.0.1:9998", "sayHello", &sayHello)
 

@@ -20,7 +20,7 @@ func Test_should_panic_if_type_not_matching_handler_prototype(t *testing.T) {
 	should := require.New(t)
 	server := NewServer()
 	should.Panics(func() {
-		server.Handle("/", func(ctx countlog.Context, req int) (*int, error) {
+		server.Handle("/", func(ctx *countlog.Context, req int) (*int, error) {
 			return nil, nil
 		})
 	})
@@ -35,7 +35,7 @@ func Test_normal_response(t *testing.T) {
 	type TestResponse struct {
 		Field2 string
 	}
-	server.Handle("/", func(ctx countlog.Context, req *TestRequest) (*TestResponse, error) {
+	server.Handle("/", func(ctx *countlog.Context, req *TestRequest) (*TestResponse, error) {
 		return &TestResponse{
 			Field2: req.Field1,
 		}, nil
@@ -60,7 +60,7 @@ func Test_error_response(t *testing.T) {
 	type TestResponse struct {
 		Field2 string
 	}
-	server.Handle("/", func(ctx countlog.Context, req *TestRequest) (*TestResponse, error) {
+	server.Handle("/", func(ctx *countlog.Context, req *TestRequest) (*TestResponse, error) {
 		return nil, errors.New("fake error")
 	})
 	go server.Start("127.0.0.1:9998")
@@ -94,7 +94,7 @@ func Test_error_number(t *testing.T) {
 	type TestResponse struct {
 		Field2 string
 	}
-	server.Handle("/", func(ctx countlog.Context, req *TestRequest) (*TestResponse, error) {
+	server.Handle("/", func(ctx *countlog.Context, req *TestRequest) (*TestResponse, error) {
 		return nil, &MyError{}
 	})
 	go server.Start("127.0.0.1:9998")

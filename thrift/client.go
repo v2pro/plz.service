@@ -23,7 +23,7 @@ func NewClient(thriftApi thrifter.API) *Client {
 
 func (client *Client) Handle(addr string, messageName string, ptrHandlerObj interface{}) {
 	ptrHandler, handlerTypeInfo := service.ConvertPtrHandler(ptrHandlerObj)
-	*ptrHandler = func(ctx countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
+	*ptrHandler = func(ctx *countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
 		reqObj := handlerTypeInfo.RequestBoxer(ptrReq)
 		// TODO: connection pool
 		conn, err := net.DialTimeout("tcp", addr, time.Second)
