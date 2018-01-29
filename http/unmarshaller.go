@@ -13,6 +13,6 @@ func newJsoniterUnmarshaller() service.Unmarshaller {
 	return &jsoniterUnmarshaller{}
 }
 
-func (unmarshaller *jsoniterUnmarshaller) Unmarshal(ctx *countlog.Context, obj interface{}, input interface{}) error {
+func (unmarshaller *jsoniterUnmarshaller) Unmarshal(ctx countlog.Context, obj interface{}, input interface{}) error {
 	return jsoniter.Unmarshal(input.([]byte), obj)
 }

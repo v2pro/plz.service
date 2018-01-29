@@ -1,12 +1,12 @@
 package http
 
 import (
-	"testing"
-	"net/http"
-	"github.com/v2pro/plz/countlog"
-	"github.com/stretchr/testify/require"
-	"io/ioutil"
 	"context"
+	"github.com/stretchr/testify/require"
+	"github.com/v2pro/plz/countlog"
+	"io/ioutil"
+	"net/http"
+	"testing"
 	"time"
 )
 
@@ -30,7 +30,7 @@ func Test_client(t *testing.T) {
 	time.Sleep(time.Millisecond * 100)
 
 	client := NewClient()
-	var sayHello func(*countlog.Context, *TestRequest) (*TestResponse, error)
+	var sayHello func(countlog.Context, *TestRequest) (*TestResponse, error)
 	client.Handle("POST", "http://127.0.0.1:9997/sayHello", &sayHello)
 
 	ctx := countlog.Ctx(context.Background())

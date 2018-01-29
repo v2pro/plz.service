@@ -1,12 +1,12 @@
 package http
 
 import (
-	"github.com/v2pro/plz/service"
-	"github.com/v2pro/plz/countlog"
-	"unsafe"
-	"net/http"
 	"bytes"
+	"github.com/v2pro/plz/countlog"
+	"github.com/v2pro/plz/service"
 	"io/ioutil"
+	"net/http"
+	"unsafe"
 )
 
 type Client struct {
@@ -24,7 +24,7 @@ func NewClient() *Client {
 
 func (client *Client) Handle(method string, url string, ptrHandlerObj interface{}) {
 	ptrHandler, handlerTypeInfo := service.ConvertPtrHandler(ptrHandlerObj)
-	*ptrHandler = func(ctx *countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
+	*ptrHandler = func(ctx countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
 		reqObj := handlerTypeInfo.RequestBoxer(ptrReq)
 		httpReq, err := http.NewRequest(method, url, nil)
 		if err != nil {
@@ -53,7 +53,7 @@ type httpClientMarshaller struct {
 	reqMarshaller service.Marshaller
 }
 
-func (marshaller *httpClientMarshaller) Marshal(ctx *countlog.Context, output interface{}, obj interface{}) error {
+func (marshaller *httpClientMarshaller) Marshal(ctx countlog.Context, output interface{}, obj interface{}) error {
 	var buf []byte
 	err := marshaller.reqMarshaller.Marshal(ctx, &buf, obj)
 	if err != nil {
@@ -68,7 +68,7 @@ type httpClientUnmarshaller struct {
 	respUnmarshaller service.Unmarshaller
 }
 
-func (unmarshaller *httpClientUnmarshaller) Unmarshal(ctx *countlog.Context, obj interface{}, input interface{}) error {
+func (unmarshaller *httpClientUnmarshaller) Unmarshal(ctx countlog.Context, obj interface{}, input interface{}) error {
 	respBody, err := ioutil.ReadAll(input.(*http.Response).Body)
 	if err != nil {
 		return err

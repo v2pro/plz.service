@@ -1,13 +1,13 @@
 package thrift
 
 import (
-	"net"
-	"github.com/v2pro/plz/countlog"
-	"github.com/v2pro/plz/concurrent"
 	"github.com/thrift-iterator/go"
-	"time"
 	"github.com/thrift-iterator/go/protocol"
+	"github.com/v2pro/plz/concurrent"
+	"github.com/v2pro/plz/countlog"
 	"github.com/v2pro/plz/service"
+	"net"
+	"time"
 	"unsafe"
 )
 
@@ -28,7 +28,7 @@ func NewServer(thriftApi thrifter.API) *Server {
 
 func (server *Server) Handle(messageName string, handlerObj interface{}) {
 	handler, handlerTypeInfo := service.ConvertHandler(handlerObj)
-	server.handlers [messageName] = &thriftHandler{
+	server.handlers[messageName] = &thriftHandler{
 		handler:         handler,
 		handlerTypeInfo: handlerTypeInfo,
 	}
@@ -45,14 +45,14 @@ func (server *Server) Start(addr string) error {
 		if err != nil {
 			return err
 		}
-		server.executor.Go(func(ctx *countlog.Context) {
+		server.executor.Go(func(ctx countlog.Context) {
 			server.handleConn(ctx, conn)
 		})
 		return nil
 	}
 }
 
-func (server *Server) handleConn(ctx *countlog.Context, conn net.Conn) {
+func (server *Server) handleConn(ctx countlog.Context, conn net.Conn) {
 	defer conn.Close()
 	// TODO: keep conn alive
 	decoder := server.thriftApi.NewDecoder(conn, nil)
@@ -100,7 +100,7 @@ func (server *Server) Stop() error {
 	return nil
 }
 
-func (server *Server) Shutdown(ctx *countlog.Context) error {
+func (server *Server) Shutdown(ctx countlog.Context) error {
 	return server.Stop()
 }
 
@@ -113,7 +113,7 @@ type ThriftException struct {
 	ErrorMessage string `thrift:",1"`
 }
 
-func (exception ThriftException) reply(ctx *countlog.Context, messageName string, conn net.Conn, thriftApi thrifter.API) {
+func (exception ThriftException) reply(ctx countlog.Context, messageName string, conn net.Conn, thriftApi thrifter.API) {
 	encoder := thriftApi.NewEncoder(conn)
 	conn.SetWriteDeadline(time.Now().Add(time.Second))
 	err := encoder.EncodeMessageHeader(protocol.MessageHeader{

@@ -1,13 +1,13 @@
 package thrift
 
 import (
-	"github.com/v2pro/plz/service"
-	"github.com/v2pro/plz/countlog"
-	"unsafe"
-	"net"
 	"github.com/thrift-iterator/go"
 	"github.com/thrift-iterator/go/protocol"
+	"github.com/v2pro/plz/countlog"
+	"github.com/v2pro/plz/service"
+	"net"
 	"time"
+	"unsafe"
 )
 
 type Client struct {
@@ -23,7 +23,7 @@ func NewClient(thriftApi thrifter.API) *Client {
 
 func (client *Client) Handle(addr string, messageName string, ptrHandlerObj interface{}) {
 	ptrHandler, handlerTypeInfo := service.ConvertPtrHandler(ptrHandlerObj)
-	*ptrHandler = func(ctx *countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
+	*ptrHandler = func(ctx countlog.Context, ptrReq unsafe.Pointer) (unsafe.Pointer, error) {
 		reqObj := handlerTypeInfo.RequestBoxer(ptrReq)
 		// TODO: connection pool
 		conn, err := net.DialTimeout("tcp", addr, time.Second)

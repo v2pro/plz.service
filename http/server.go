@@ -1,11 +1,11 @@
 package http
 
 import (
-	"net/http"
 	"github.com/v2pro/plz/countlog"
-	"io/ioutil"
-	"unsafe"
 	"github.com/v2pro/plz/service"
+	"io/ioutil"
+	"net/http"
+	"unsafe"
 )
 
 type Server struct {
@@ -30,7 +30,7 @@ func (server *Server) Start(addr string) error {
 	return srv.ListenAndServe()
 }
 
-func (server *Server) Shutdown(ctx *countlog.Context) error {
+func (server *Server) Shutdown(ctx countlog.Context) error {
 	if server.server == nil {
 		return nil
 	}
@@ -87,7 +87,7 @@ type httpServerUnmarshaller struct {
 	reqUnmarshaller service.Unmarshaller
 }
 
-func (unmarshaller *httpServerUnmarshaller) Unmarshal(ctx *countlog.Context, request interface{}, input interface{}) error {
+func (unmarshaller *httpServerUnmarshaller) Unmarshal(ctx countlog.Context, request interface{}, input interface{}) error {
 	httpReq := input.(*http.Request)
 	reqBody, err := ioutil.ReadAll(httpReq.Body)
 	ctx.TraceCall("callee!ioutil.ReadAll", err)
@@ -102,7 +102,7 @@ type httpServerMarshaller struct {
 	respMarshaller service.Marshaller
 }
 
-func (marshaller *httpServerMarshaller) Marshal(ctx *countlog.Context, output interface{}, obj interface{}) error {
+func (marshaller *httpServerMarshaller) Marshal(ctx countlog.Context, output interface{}, obj interface{}) error {
 	var buf []byte
 	err := marshaller.respMarshaller.Marshal(ctx, &buf, obj)
 	if err != nil {

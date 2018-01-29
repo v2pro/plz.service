@@ -1,13 +1,13 @@
 package thrift
 
 import (
-	"testing"
-	"github.com/v2pro/plz/countlog"
 	"context"
 	"github.com/stretchr/testify/require"
-	"time"
-	"runtime/debug"
 	"github.com/thrift-iterator/go"
+	"github.com/v2pro/plz/countlog"
+	"runtime/debug"
+	"testing"
+	"time"
 )
 
 func Test_normal_response(t *testing.T) {
@@ -20,7 +20,7 @@ func Test_normal_response(t *testing.T) {
 		Field2 string `thrift:",1"`
 	}
 	server := NewServer(thrifter.Config{Protocol: thrifter.ProtocolBinary}.Froze())
-	server.Handle("sayHello", func(ctx *countlog.Context, req *TestRequest) (*TestResponse, error) {
+	server.Handle("sayHello", func(ctx countlog.Context, req *TestRequest) (*TestResponse, error) {
 		return &TestResponse{
 			Field2: "hello",
 		}, nil
@@ -29,7 +29,7 @@ func Test_normal_response(t *testing.T) {
 	time.Sleep(time.Millisecond * 100)
 	defer server.Stop()
 	client := NewClient(thrifter.Config{Protocol: thrifter.ProtocolBinary}.Froze())
-	var sayHello func(ctx *countlog.Context, req *TestRequest) (*TestResponse, error)
+	var sayHello func(ctx countlog.Context, req *TestRequest) (*TestResponse, error)
 	client.Handle("127.0.0.1:9998", "sayHello", &sayHello)
 
 	ctx := countlog.Ctx(context.Background())
