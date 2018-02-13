@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	countlog.MinLevel = countlog.LevelTrace
+	countlog.SetMinLevel(countlog.LevelTrace)
 }
 
 func Test_should_panic_if_type_not_matching_handler_prototype(t *testing.T) {

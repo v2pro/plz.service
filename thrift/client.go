@@ -4,7 +4,7 @@ import (
 	"github.com/thrift-iterator/go"
 	"github.com/thrift-iterator/go/protocol"
 	"github.com/v2pro/plz/countlog"
-	"github.com/v2pro/plz/service"
+	"github.com/v2pro/plz.service/service"
 	"net"
 	"time"
 	"unsafe"

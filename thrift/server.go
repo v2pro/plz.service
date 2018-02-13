@@ -5,10 +5,11 @@ import (
 	"github.com/thrift-iterator/go/protocol"
 	"github.com/v2pro/plz/concurrent"
 	"github.com/v2pro/plz/countlog"
-	"github.com/v2pro/plz/service"
+	"github.com/v2pro/plz.service/service"
 	"net"
 	"time"
 	"unsafe"
+	"context"
 )
 
 type Server struct {
@@ -45,8 +46,8 @@ func (server *Server) Start(addr string) error {
 		if err != nil {
 			return err
 		}
-		server.executor.Go(func(ctx *countlog.Context) {
-			server.handleConn(ctx, conn)
+		server.executor.Go(func(ctx context.Context) {
+			server.handleConn(countlog.Ctx(ctx), conn)
 		})
 		return nil
 	}

@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/json-iterator/go"
 	"github.com/v2pro/plz/countlog"
-	"github.com/v2pro/plz/service"
+	"github.com/v2pro/plz.service/service"
 )
 
 type jsoniterResponseMarshaller struct {

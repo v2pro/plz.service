@@ -2,10 +2,10 @@ package http
 
 import (
 	"github.com/v2pro/plz/countlog"
-	"github.com/v2pro/plz/service"
 	"io/ioutil"
 	"net/http"
 	"unsafe"
+	"github.com/v2pro/plz.service/service"
 )
 
 type Server struct {
